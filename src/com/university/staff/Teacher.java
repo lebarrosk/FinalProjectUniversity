@@ -36,5 +36,4 @@ public abstract class Teacher{
     }
 
     public abstract double calculateSalary();
-
 }
