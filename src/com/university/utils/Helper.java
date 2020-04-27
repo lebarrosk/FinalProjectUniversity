@@ -1,6 +1,7 @@
 package com.university.utils;
 
 import com.university.classes.Classroom;
+import com.university.classes.Course;
 import com.university.classes.Student;
 import com.university.staff.Teacher;
 
@@ -17,9 +18,9 @@ public class Helper {
         return teacher;
     }
 
-    public static Student getStudentByID(Integer identification, List<Student> studentList) {
+    public static Student getStudentByID(int identification, List<Student> studentList) {
         Student student = studentList.stream()
-                .filter(stud -> identification.equals(stud.getId()))
+                .filter(stud -> identification == stud.getId())
                 .findAny()
                 .orElse(null);
         return student;
@@ -31,6 +32,25 @@ public class Helper {
                 .findAny()
                 .orElse(null);
         return classRoom;
+    }
+
+    public static Course getClassById(int identification, List<Course> courseList) {
+        Course course = courseList.stream()
+                .filter(cl -> cl.getId() == identification)
+                .findAny()
+                .orElse(null);
+        return course;
+    }
+
+    public static List<Course> getStudentClasses(int id, List<Course> courseList) {
+        List<Course> courses = new ArrayList<>();
+        for (Course course : courseList) {
+            Student student = getStudentByID(id, course.getStudentList());
+            if (student != null) {
+                courses.add(course);
+            }
+        }
+        return courses;
     }
 
     public static List<Student> getFirstXStudents(int quantity, List<Student> studentList) {

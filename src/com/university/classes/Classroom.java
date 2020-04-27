@@ -24,4 +24,10 @@ private int capacity;
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + name +
+                "; Capacity: " + capacity;
+    }
 }

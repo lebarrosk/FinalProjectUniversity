@@ -36,4 +36,11 @@ public abstract class Teacher{
     }
 
     public abstract double calculateSalary();
+
+    @Override
+    public String toString(){
+    return " Id: " + identification +
+            "; Name: " + name +
+            "; Salary: " + calculateSalary();
+    }
 }
