@@ -223,10 +223,11 @@ public class University {
         List<Student> classStudentList;
 
         System.out.println("Please enter the following information:");
+        printCourses();
         //Class Id
         id = getNonExistingClassId();
 
-        System.out.println("** Enter the Class Name:");
+        System.out.println("** Enter the New Class Name:");
         System.out.println("Note: if the name has space, please replace space for % Example: Differential%Calculus:");
         System.out.println("Note: Otherwise it will take only the first word");
         className = scanner.next();
@@ -267,7 +268,7 @@ public class University {
         boolean sw = true;
 
         while (sw) {
-            System.out.println("** Enter the Class Id:");
+            System.out.println("** Enter the New Class Id:");
             action = scanner.nextInt();
             Course course = Helper.getClassById(action, coursesList);
 
