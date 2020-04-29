@@ -16,6 +16,8 @@ public class University {
     public static List<Teacher> teacherList = new ArrayList<>();
     public static List<Course> coursesList = new ArrayList<>();
     public static List<Classroom> classroomList = new ArrayList<>();
+    public static String messageStudentOK = "";
+    public static String messageStudentError = "";
     public static int whileAction;
     public static Scanner scanner = new Scanner(System.in);
     public static int action;
@@ -30,7 +32,7 @@ public class University {
         System.out.println("========= WELCOME TO UNIVERSITY=========");
 
         while (whileAction == 1) {
-            System.out.println("1: Print all University Teachers");
+            System.out.println("1: Print all Teachers");
             System.out.println("2: Print all Classes");
             System.out.println("3: Create new Student");
             System.out.println("4: Create new Class");
@@ -47,7 +49,7 @@ public class University {
                     break;
                 case 2:
                     printCourses();
-                    System.out.println("Enter the Class Id to see details: ");
+                    System.out.println("*** ENTER THE CLASS ID TO SEE DETAILS ***");
                     action = scanner.nextInt();
 
                     showCourse(action);
@@ -57,14 +59,12 @@ public class University {
                     createNewStudentAssociateToClass();
                     break;
                 case 4:
-                    //CREATE A CLASS WITH TEACHER, STUDENTS AND CLASSROOM
-                    // ID TEACHER, ID STUDENTS, SHOW LIST OF CLASSROOMS AND ADD 1
-                    System.out.println("*** CREATE A NEW CLASS***");
-                    System.out.println("");
+                    System.out.println("*** CREATE A NEW CLASS ***");
+                    createClassWithAllAssociated();
                     break;
                 case 5:
                     printStudents();
-                    System.out.println("Please enter Student Id: ");
+                    System.out.println("*** PLEASE WRITE STUDENT ID TO SEE THE ALL THE CLASSES RELATED ***");
                     action = scanner.nextInt();
 
                     showClassesOfStudent(action);
@@ -77,34 +77,34 @@ public class University {
                     break;
             }
             System.out.println(" ");
-            System.out.println("1: If you wish to continue");
-            System.out.println("Any other number key to finish");
+            System.out.println("1: IF YOU WISH TO CONTINUE");
+            System.out.println("ANY OTHER NUMBER KEY TO FINISH YOUR VISIT");
 
             whileAction = scanner.nextInt();
             if (whileAction == 1) {
-                System.out.println("What do you want to do?: ");
+                System.out.println("WHAT DO YOU WANT TO DO?: ");
             } else {
-                System.out.println("Good Bye!!");
+                System.out.println("GOOD BYE!!!!");
             }
         }
     }
 
-    public static void printTeachers() {
-        System.out.println("<*** UNIVERSITY TEACHERS ***>");
+    private static void printTeachers() {
+        System.out.println("University Teachers: ");
         teacherList.forEach(teacher -> {
             System.out.println(teacher.toString());
         });
     }
 
-    public static void printCourses() {
-        System.out.println("<*** UNIVERSITY CLASSES ***>");
+    private static void printCourses() {
+        System.out.println("University Classes: ");
         coursesList.forEach(course -> {
-            System.out.println(course.toString());
+            System.out.println(course.getCourseWithoutStudents());
         });
     }
 
-    public static void printStudents() {
-        System.out.println("<*** UNIVERSITY STUDENTS ***> ");
+    private static void printStudents() {
+        System.out.println("University Students: ");
         System.out.println("{");
         studentList.forEach(student -> {
             System.out.println(student.toString());
@@ -112,15 +112,15 @@ public class University {
         System.out.println("}");
     }
 
-    public static void printClassroom(){
-        System.out.println("<*** UNIVERSITY CLASSROOMS ***>");
+    private static void printClassroom() {
+        System.out.println("University Classrooms: ");
         classroomList.forEach(classroom -> {
             System.out.println(classroom.toString());
         });
     }
 
-    public static void showCourse(int id) {
-        System.out.println("*** CLASS DETAILS ***");
+    private static void showCourse(int id) {
+        System.out.println("Class Details: ");
         Course course = Helper.getClassById(id, coursesList);
 
         if (course != null) {
@@ -132,7 +132,7 @@ public class University {
         }
     }
 
-    public static void showClassesOfStudent(int id) {
+    private static void showClassesOfStudent(int id) {
         List<Course> courses = Helper.getStudentClasses(id, coursesList);
         Student student = Helper.getStudentByID(id, studentList);
 
@@ -153,44 +153,208 @@ public class University {
         }
     }
 
-    public static void createNewStudentAssociateToClass() {
-        String[] students = new String[3];
-        System.out.println("Please enter the student data like that: ID-Name%LastName-Age");
-        String data = scanner.next();
-        students = data.split("-");
-        String[] name = students[1].split("%");
+    private static void createNewStudentAssociateToClass() {
+        printStudents();
 
-        Student student = Helper.getStudentByID(Integer.parseInt(students[0]), studentList);
+        int id = 0;
+        boolean sw = true;
+        Student student = null;
+        String[] name = new String[2];
 
-        if (student != null) {
-            System.out.println("ERROR: Student Id already exist!");
-        } else {
-            //Create Student and added to the University List
-            Student stdn = new Student(Integer.parseInt(students[0]), name[0] + " " + name[1], Integer.parseInt(students[2]));
-            studentList.add(stdn);
+        //validate that the Student doesn't exist
+        while (sw) {
+            System.out.println("Please enter the Id:");
+            id = scanner.nextInt();
+            student = Helper.getStudentByID(id, studentList);
 
-            System.out.println("** Enter the class id you want to associate the student **");
-            action = scanner.nextInt();
-
-            //Add the new Student to a specified class
-            Course course = Helper.getClassById(action, coursesList);
-            if (course == null) {
-                System.out.println("ERROR: The id class doesn't exist!");
+            if (student != null) {
+                System.out.println("WARNING: Student Id already exist! Try again");
             } else {
+                sw = false;
+            }
+        }
+        System.out.println("Please enter the Name and Last Name, like this: Name%LastName");
+        String nameLastName = scanner.next();
+        name = nameLastName.split("%");
 
-                for (int i = 0; i < coursesList.size(); i++) {
-                    //Update the class student list
-                    if (coursesList.get(i).getId() == course.getId()) {
-                        List<Student> courseStudents = coursesList.get(i).getStudentList();
-                        courseStudents.add(student);
-                        coursesList.get(i).setStudentList(courseStudents);
+        if (name.length < 2 || name.length > 3) {
+            System.out.println("WARNING: You must enter one Student's Last Name. Try again:");
+        }
 
-                        System.out.println("Student added to the class!!");
-                        i = coursesList.size();
-                    }
+        System.out.println("Please enter the Student's age");
+
+        action = scanner.nextInt();
+
+        //Create Student and added to the University List
+        Student stdn = new Student(id, name[0] + " " + name[1], action);
+        studentList.add(stdn);
+
+        printCourses();
+        System.out.println("** Enter the class id you want to associate the student **");
+        action = scanner.nextInt();
+
+        //Add the new Student to a specified class
+        Course course = Helper.getClassById(action, coursesList);
+        if (course == null) {
+            System.out.println("WARNING: The id class doesn't exist!");
+        } else {
+
+            for (int i = 0; i < coursesList.size(); i++) {
+                //Update the class student list
+                if (coursesList.get(i).getId() == course.getId()) {
+                    List<Student> courseStudents = coursesList.get(i).getStudentList();
+
+                    courseStudents.add(student);
+
+                    coursesList.get(i).setStudentList(courseStudents);
+
+                    System.out.println("Student added successfully to the class!!");
+                    i = coursesList.size();
                 }
             }
         }
+    }
+
+    private static void createClassWithAllAssociated() {
+        int id;
+        String className;
+        Classroom classroom;
+        Teacher teacher;
+        List<Student> classStudentList;
+
+        System.out.println("Please enter the following information:");
+        //Class Id
+        id = getNonExistingClassId();
+
+        System.out.println("** Enter the Class Name:");
+        System.out.println("Note: if the name has space, please replace space for % Example: Differential%Calculus:");
+        System.out.println("Note: Otherwise it will take only the first word");
+        className = scanner.next();
+
+        String[] clsNames = className.split("%");
+        className = "";
+
+        if (clsNames.length > 1) {
+            for (String cls : clsNames) {
+                className += cls + " ";
+            }
+            className = className.trim();
+        }
+
+        //Classroom by name
+        classroom = getExistingClassroomName();
+
+        //Teacher by Id
+        teacher = getExistingTeacher();
+
+        //Students of the class
+        classStudentList = getStudentList();
+
+        Course course = new Course(id, className, classroom, teacher, classStudentList);
+        coursesList.add(course);
+
+        System.out.println(messageStudentOK + "}");
+        System.out.println(messageStudentError + "}");
+        System.out.println("");
+
+        System.out.println("New Class Details:  ");
+        System.out.println(course.toString());
+
+        System.out.println("Class successfully added!!");
+    }
+
+    private static int getNonExistingClassId() {
+        boolean sw = true;
+
+        while (sw) {
+            System.out.println("** Enter the Class Id:");
+            action = scanner.nextInt();
+            Course course = Helper.getClassById(action, coursesList);
+
+            if (course != null) {
+                System.out.println("ERROR: Class Id already exist! Try again:");
+            } else {
+                sw = false;
+            }
+        }
+        return action;
+    }
+
+    private static Classroom getExistingClassroomName() {
+        boolean sw = true;
+        String name = "";
+        Classroom classroom = null;
+
+        System.out.println("** Please choose a Classroom by the name:");
+        System.out.println("{");
+        printClassroom();
+        System.out.println("}");
+
+        while (sw) {
+            name = scanner.next();
+            classroom = Helper.getClassRoomByName(name, classroomList);
+            if (classroom == null) {
+                System.out.println("** ERROR: Classroom name doesn't exist! Try again:");
+            } else {
+                sw = false;
+            }
+        }
+        return classroom;
+    }
+
+    private static Teacher getExistingTeacher() {
+        boolean sw = true;
+        Teacher teacher = null;
+
+        System.out.println("** Please choose a Teacher by the Id:");
+        System.out.println("{");
+        printTeachers();
+        System.out.println("}");
+
+        while (sw) {
+            action = scanner.nextInt();
+            teacher = Helper.getTeacherByID(action, teacherList);
+
+            if (teacher == null) {
+                System.out.println("ERROR: Teacher ID doesn't exist! Try again:");
+            } else {
+                sw = false;
+            }
+        }
+
+        return teacher;
+    }
+
+    private static List<Student> getStudentList() {
+        boolean sw = true;
+        Student student;
+        String ids;
+        messageStudentOK = "The following Student Ids were created: {";
+        messageStudentError = "The following Student Ids were not created, because they don't exist: {";
+        List<Student> students = new ArrayList<>();
+
+        printStudents();
+        System.out.println("** Please choose the Students of the class:");
+        System.out.println("** Please enter the IDs separated by comma: StudentID1,StudentID2...");
+        ids = scanner.next();
+
+        String[] listIds = ids.split(",");
+
+        for (String id : listIds) {
+            student = Helper.getStudentByID(Integer.parseInt(id), studentList);
+
+            if (student == null) {
+                messageStudentError += id + ", ";
+            } else {
+                boolean repeated = students.contains(student);
+                if (!repeated) {
+                    students.add(student);
+                    messageStudentOK += id + ", ";
+                }
+            }
+        }
+
+        return students;
     }
 
 }

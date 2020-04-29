@@ -1,22 +1,22 @@
 package com.university.staff;
 
 public abstract class Teacher{
-    private int identification;
+    private int id;
     private String name;
     private double baseSalary;
 
-    public Teacher(int identification, String name, double baseSalary) {
-        this.identification = identification;
+    public Teacher(int id, String name, double baseSalary) {
+        this.id = id;
         this.name = name;
         this.baseSalary = baseSalary;
     }
 
-    public int getIdentification() {
-        return identification;
+    public int getId() {
+        return id;
     }
 
-    public void setIdentification(int identification) {
-        this.identification = identification;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -39,7 +39,7 @@ public abstract class Teacher{
 
     @Override
     public String toString(){
-    return " Id: " + identification +
+    return " Id: " + id +
             "; Name: " + name +
             "; Salary: " + calculateSalary();
     }

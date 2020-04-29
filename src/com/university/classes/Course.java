@@ -63,10 +63,14 @@ public class Course {
     public String toString() {
         final String[] course = {"Id: " + id + "; Class Name: " + name + "; Classroom: " + classroom.getName() + "; Teacher: " + teacher.getName() + System.lineSeparator()};
         course[0] += " Students: ";
-        studentList.forEach(student -> {
+        for (Student student : studentList) {
             course[0] += System.lineSeparator() + student.toString();
-        });
+        }
         return course[0];
+    }
+
+    public String getCourseWithoutStudents(){
+        return "Id: " + id + "; Class Name: " + name;
     }
 
 }

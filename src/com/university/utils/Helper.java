@@ -12,7 +12,7 @@ import java.util.Random;
 public class Helper {
     public static Teacher getTeacherByID(Integer identification, List<Teacher> teacherList) {
         Teacher teacher = teacherList.stream()
-                .filter(teach -> identification.equals(teach.getIdentification()))
+                .filter(teach -> identification.equals(teach.getId()))
                 .findAny()
                 .orElse(null);
         return teacher;
